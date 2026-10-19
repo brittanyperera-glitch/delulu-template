@@ -1,0 +1,310 @@
+@import "tailwindcss";
+
+/* Design tokens. Small-text colours are checked at 4.5:1 against every paper they sit on. */
+@theme {
+  --color-cream: #f5ead8;
+  --color-card: #f9f4ed;
+  --color-surface: #ebddc5;
+  --color-brown: #402310;
+  --color-ink: #201e1d;
+  --color-orange: #c67139;
+  --color-mustard: #e0a526;
+  --color-avocado: #7a8a5e;
+  --color-rust: #8c491a;
+  --color-muted: #52493d;
+  --color-dust: #eee7db;
+
+  /* More papers to post on. Light ones take brown ink, dark ones take cream, and each was
+     chosen to sit inside the same retro range as the originals rather than fight it. */
+  --color-butter: #f2dd94;
+  --color-rose: #e6b0a8;
+  --color-sky: #b8ccd4;
+  --color-peach: #edb488;
+  --color-lilac: #cdbcd9;
+  --color-terracotta: #a24e33;
+  --color-teal: #37665b;
+  --color-denim: #45647d;
+  --color-plum: #6a3a4d;
+  --color-olive: #5f5f30;
+  --color-forest: #43593a;
+  --color-cocoa: #573f2b;
+  --color-wine: #6e2f3a;
+
+  /* The Mixtape tab is the one surface that leaves the retro paper palette for a Spotify-style
+     dark green/black: a cool near-black with a green undertone, off-white ink, one green accent. */
+  --color-mixtape-bg: #0f1710;
+  --color-mixtape-card: #1a271b;
+  --color-mixtape-line: #2c3f2e;
+  --color-mixtape-ink: #eaf2ea;
+  --color-mixtape-muted: #94a996;
+  --color-mixtape-them: #1f3a2a;
+  --color-spotify: #1db954;
+
+  --font-display: var(--font-caprasimo), "Cooper Black", Georgia, serif;
+  --font-body: var(--font-figtree), system-ui, "Helvetica Neue", sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, "SF Mono", monospace;
+  --font-serif: var(--font-eb-garamond), "EB Garamond", Georgia, serif;
+
+  --shadow-hard: 5px 5px 0 #402310;
+  --shadow-hard-sm: 2px 2px 0 #402310;
+  --radius-card: 16px;
+  --radius-sheet: 28px;
+}
+
+html,
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Phone column on wider screens: a calm backdrop behind it. Only up to the width where the
+   home page switches to its own two-column layout, so that layout is not squeezed. */
+@media (min-width: 641px) {
+  html {
+    background-color: var(--color-surface);
+    background-image: radial-gradient(rgb(64 35 16 / 0.12) 1.5px, transparent 1.6px);
+    background-size: 18px 18px;
+  }
+}
+@media (min-width: 641px) and (max-width: 1023px) {
+  body {
+    max-width: 480px;
+    margin-inline: auto;
+    box-shadow:
+      0 0 0 3px var(--color-brown),
+      8px 0 0 var(--color-brown);
+  }
+}
+
+/* In the base layer so a text-* utility on an anchor wins; an unlayered rule beats every utility. */
+@layer base {
+  a {
+    color: var(--color-brown);
+  }
+  /* Rust, not orange: orange is 3:1 on cream, too low for link-sized text. */
+  a:hover {
+    color: var(--color-rust);
+  }
+}
+
+/* Sticker label: chunky uppercase, the one rule every pill and nav item shares.
+   Figtree at 700 rather than a fourth webfont. */
+.label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Same sticker label, but keeps the casing it was written in (reactions are lower case on purpose). */
+.label-asis {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+}
+
+/* Paper textures for a scrap. A skin picks one and every post made as her inherits it, so a
+   run of posts reads as a run of personas rather than a stack of identical rectangles.
+   All gradients: no image assets to ship, and they tint with whatever paper sits underneath. */
+.pat-grid {
+  background-image:
+    repeating-linear-gradient(0deg, rgb(64 35 16 / 0.09) 0 1px, transparent 1px 18px),
+    repeating-linear-gradient(90deg, rgb(64 35 16 / 0.09) 0 1px, transparent 1px 18px);
+}
+.pat-dots {
+  background-image: radial-gradient(rgb(64 35 16 / 0.16) 1.5px, transparent 1.6px);
+  background-size: 14px 14px;
+}
+/* A ripped-off bottom edge. The mask does the tearing, so the paper colour tears with it. */
+.pat-torn {
+  mask-image:
+    linear-gradient(#000 0 0), conic-gradient(from -45deg at bottom, transparent 0 90deg, #000 0);
+  mask-size:
+    100% calc(100% - 9px),
+    12px 9px;
+  mask-position:
+    top left,
+    bottom left;
+  mask-repeat: no-repeat, repeat-x;
+  mask-composite: add;
+  -webkit-mask-composite: source-over;
+}
+/* A strip of tape across the top left, as if the scrap were stuck down. */
+.pat-tape {
+  position: relative;
+}
+.pat-tape::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 14px;
+  width: 74px;
+  height: 22px;
+  transform: rotate(-6deg);
+  background: rgb(224 165 38 / 0.55);
+  border-left: 1px solid rgb(64 35 16 / 0.25);
+  border-right: 1px solid rgb(64 35 16 / 0.25);
+  pointer-events: none;
+}
+
+/* Sprocket holes down both edges of a video scrap, so it reads as a strip of film. */
+.filmstrip {
+  background-image:
+    repeating-linear-gradient(180deg, rgb(64 35 16 / 0.85) 0 7px, transparent 7px 16px),
+    repeating-linear-gradient(180deg, rgb(64 35 16 / 0.85) 0 7px, transparent 7px 16px);
+  background-size:
+    6px 100%,
+    6px 100%;
+  background-position:
+    left center,
+    right center;
+  background-repeat: repeat-y, repeat-y;
+}
+
+/* The perforated edge of a torn-off ticket. */
+.ticket-edge {
+  background-image: radial-gradient(circle at 0 50%, transparent 0 4px, currentColor 4px);
+  background-size: 100% 12px;
+}
+
+/* The payoff. Each thing resolves in its own idiom rather than sharing one house
+   celebration: a stamp thumps down, wax cracks, a terminal types out.
+   These fire on the CLIENT transition, when you act, not on every render. A page load must
+   not replay yesterday's stamps. */
+@keyframes stamp-slam {
+  0% {
+    transform: scale(2.4) rotate(-12deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(0.92) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+.slam {
+  animation: stamp-slam 340ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes wax-crack {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  35% {
+    transform: scale(1.18) rotate(-5deg);
+  }
+  55% {
+    transform: scale(0.94) rotate(4deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+.crack {
+  animation: wax-crack 420ms ease-out both;
+}
+
+/* Reveals the text a character-width at a time, with a block cursor on the edge. */
+@keyframes type-out {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+@keyframes term-blink {
+  50% {
+    border-color: transparent;
+  }
+}
+.type-out {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 0.5em solid currentColor;
+  animation:
+    type-out 900ms steps(28, end) both,
+    term-blink 700ms step-end infinite;
+}
+
+@keyframes flash-term {
+  0%,
+  100% {
+    filter: none;
+  }
+  25%,
+  75% {
+    filter: brightness(2.4);
+  }
+}
+.flash-term {
+  animation: flash-term 260ms steps(2, end) 2;
+}
+
+/* One place, so a new payoff cannot forget it. */
+@media (prefers-reduced-motion: reduce) {
+  .slam,
+  .crack,
+  .type-out,
+  .flash-term {
+    animation: none;
+  }
+  .type-out {
+    border-right: 0;
+    white-space: normal;
+  }
+}
+
+/* A disclosure body easing in. Separate from .slam, which is a stamp landing: a panel that
+   zoomed in from 2.4x would read as a bug rather than a reveal. Details keeps the body in
+   display:none while closed, so this runs on the open and not on page load. */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.reveal {
+  animation: reveal 180ms ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
+}
+
+/* A deckled edge, for a room printed on paper that was torn rather than cut. Top and bottom
+   only: the sides are the window. */
+.deckle {
+  mask-image:
+    conic-gradient(from -45deg at top, transparent 0 90deg, #000 0), linear-gradient(#000 0 0),
+    conic-gradient(from 135deg at bottom, transparent 0 90deg, #000 0);
+  mask-size:
+    14px 7px,
+    100% calc(100% - 14px),
+    14px 7px;
+  mask-position:
+    top left,
+    center,
+    bottom left;
+  mask-repeat: repeat-x, no-repeat, repeat-x;
+  mask-composite: add;
+  -webkit-mask-composite: source-over;
+}
